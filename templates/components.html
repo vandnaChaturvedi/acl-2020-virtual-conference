@@ -243,3 +243,31 @@
   {% endfor %}
   </div>
 {%- endmacro %}
+
+{% macro socialgroup(socials) -%}
+<div class="cards row">
+  {% for social in socials %}
+  <div class="col-md-6 col-sm-12 p-3" style="box-sizing: border-box;">
+    <div class="card" style="display: block; overflow: hidden; width: 100%;">
+      <div
+        class="card-header text-center"
+        style="min-height: 200px; width: 100%;"
+      >
+        <a class="text-muted" href="">
+          <!-- TODO: Do socials need a separate individual page like workshops? -->
+          <h3 class="card-title main-title">
+            {{social.title}}
+          </h3>
+        </a>
+        <div class="card-subtitle text-muted">
+          {{ social.organizers | join(", ") }}
+        </div>
+        <div class="m-3 text-left card-subtitle font-italic">
+          {{social.abstract|safe}}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{%- endmacro %}

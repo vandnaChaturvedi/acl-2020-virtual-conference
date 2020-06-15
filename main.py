@@ -28,7 +28,7 @@ def main(site_data_path):
         elif typ == "yml":
             site_data[name] = yaml.load(open(f).read(), Loader=yaml.SafeLoader)
 
-    for typ in ["papers", "speakers", "workshops", "demos"]:
+    for typ in ["papers", "speakers", "workshops", "demos", "socials"]:
         by_uid[typ] = {}
         for p in site_data[typ]:
             by_uid[typ][p["UID"]] = p
@@ -186,6 +186,20 @@ def format_workshop(v):
     }
 
 
+def format_social(v):
+    list_keys = ["organizers"]
+    list_fields = {}
+    for key in list_keys:
+        list_fields[key] = extract_list_field(v, key)
+
+    return {
+        "id": v["UID"],
+        "title": v["title"],
+        "organizers": list_fields["organizers"],
+        "abstract": v["abstract"],
+    }
+
+
 # ITEM PAGES
 
 
@@ -229,6 +243,13 @@ def sponsor(sponsor):
 def chat():
     data = _data()
     return render_template("chat.html", **data)
+
+
+@app.route("/socials.html")
+def socials():
+    data = _data()
+    data["socials"] = [format_social(social) for social in site_data["socials"]]
+    return render_template("socials.html", **data)
 
 
 # FRONT END SERVING
