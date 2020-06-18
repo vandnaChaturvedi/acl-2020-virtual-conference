@@ -173,6 +173,9 @@ def livestream():
 @app.route("/tutorials.html")
 def tutorials():
     data = _data()
+    data["tutorials"] = [
+        format_tutorial(workshop) for workshop in site_data["tutorials"]
+    ]
     return render_template("tutorials.html", **data)
 
 
@@ -238,7 +241,18 @@ def format_workshop(v):
         "abstract": v["abstract"],
     }
 
+def format_tutorial(v):
+    list_keys = ["authors"]
+    list_fields = {}
+    for key in list_keys:
+        list_fields[key] = extract_list_field(v, key)
 
+    return {
+        "id": v["UID"],
+        "title": v["title"],
+        "organizers": list_fields["authors"],
+        "abstract": v["abstract"],
+    }
 # ITEM PAGES
 
 
