@@ -1,28 +1,62 @@
 # pylint: disable=global-statement,redefined-outer-name
-""" Script used to create|delete AWS Cognito user """
+""" Script used to create|disable AWS Cognito user """
 import argparse
 import sys
+from dataclasses import dataclass
+
+import boto3
+import pandas
+import yaml
+
+
+@dataclass
+class User:
+    """ Class for AWS Cognito user """
+
+    # pylint: disable=too-many-instance-attributes
+    first_name: str
+    last_name: str
+    email: str
+    middle_name: str = ""
+    preferred_name: str = ""
+    affiliation: str = ""
+    timezone: str = ""
+    country: str = ""
+
+    def name(self) -> str:
+        """ Generate the name field """
+        return f"{self.first_name} {self.last_name}"
 
 
 def create_user(client, profile, user):
     """ Creates a new user in the specified user pool """
     response = client.admin_create_user(
-        UserPoolId=profile.pool_id,
+        UserPoolId=profile["user_pool_id"],
         Username=user.email,
         UserAttributes=[
             {"Name": "email", "Value": user.email},
-            {"Name": "custom:name", "Value": user.name},
+            {"Name": "email_verified", "Value": "true"},
+            {"Name": "custom:name", "Value": user.name()},
         ],
-        ValidationData=[{"Name": "string", "Value": "string"},],
-        MessageAction="RESEND",
-        DesiredDeliveryMediums=["EMAIL"],
     )
     return response
 
 
 def delete_user(client, profile, user):
     """ Deletes a user from the pool """
-    response = client.admin_delete_user(UserPoolId=profile.pool_id, Username=user.email)
+    response = client.admin_delete_user(
+        UserPoolId=profile["user_pool_id"],
+        Username=user.email
+    )
+    return response
+
+
+def disable_user(client, profile, user):
+    """ Disables the specified user """
+    response = client.admin_disable_user(
+        UserPoolId=profile["user_pool_id"],
+        Username=user.email
+    )
     return response
 
 
@@ -30,47 +64,85 @@ def parse_arguments():
     """ Parse Arguments """
     parser = argparse.ArgumentParser(
         description="AWS Cognito User Command Line",
-        usage="cognito_user.py [-h] [-c|-d] user_file aws_profile",
-    )
-    parser.add_argument(
-        "-c",
-        "--create",
-        action="store_true",
-        default=True,
-        help="Create users listed in the file (default)",
+        # usage="cognito_user.py [-h] [-d] user_file aws_profile",
     )
     parser.add_argument(
         "-d",
-        "--delete",
+        "--disable",
         action="store_true",
         default=False,
-        help="Delete users listed in the file",
+        help="Disable users (instead of create) listed in the file",
     )
     parser.add_argument(
         "user_file", help="The file contains user information for AWS Cognito",
     )
     parser.add_argument("aws_profile", help="The file contains AWS profile")
 
-    args = parser.parse_args()
-    if args.create and args.delete:
-        parser.print_help()
-        sys.exit(2)
-
     return parser.parse_args()
 
 
-def parse_file():
+def parse_file(path):
     """ Parse user file to read user information """
+    has_error = False
+    error_message = ""
     users = []
-    return users
+
+    _, ext = path.split("/")[-1].split(".")
+    if ext == "xlsx":
+        dataframe = pandas.read_excel(path)
+    elif ext == "csv":
+        dataframe = pandas.read_csv(path)
+    else:
+        has_error = True
+        error_message = f"File {path} is not supported"
+
+    if has_error is False:
+        # Check invalid rows/records
+        no_last_name = dataframe["last_name"].isnull()
+        no_first_name = dataframe["first_name"].isnull()
+        no_email = dataframe["email"].isnull()
+        invalid_rows = dataframe.loc[no_last_name | no_first_name | no_email]
+        if len(invalid_rows.index) == 0:
+            # No invalid records.  Let's go ahead
+            users = [User(**kwargs) for kwargs in dataframe.to_dict(orient="records")]
+        else:
+            has_error = True
+            error_message = "Invalid record(s) found"
+            users = invalid_rows
+
+    return has_error, users, error_message
 
 
 if __name__ == "__main__":
     args = parse_arguments()
     user_file = args.user_file
     aws_profile = args.aws_profile
-    # client = boto3.client(
-    #     "cognito-idp",
-    #     aws_access_key_id="AKIAIO5FODNN7EXAMPLE",
-    #     aws_secret_access_key="ABCDEF+c2L7yXeGvUyrPgYsDnWRRC1AYEXAMPLE",
-    # )
+    profile = yaml.load(open(aws_profile).read(), Loader=yaml.SafeLoader)
+
+    # Prepare the AWS client
+    client = boto3.client(
+        "cognito-idp",
+        aws_access_key_id=profile["access_key_id"],
+        aws_secret_access_key=profile["secret_access_key"],
+        region_name=profile["region_name"],
+    )
+
+    # Prepare the user information
+    failed, users, message = parse_file(user_file)
+    if failed is False:
+        # We can create or disable user now
+        if args.disable:
+            # Disable user
+            for user in users:
+                response = disable_user(client, profile, user)
+                print(response)
+        else:
+            # Create user
+            for user in users:
+                response = create_user(client, profile, user)
+                print(response)
+    else:
+        print(message)
+        if isinstance(users, pandas.DataFrame):
+            print(users)
+        sys.exit(2)
