@@ -272,6 +272,31 @@ def format_paper(v):
     }
 
 
+def format_demo_paper(v):
+    list_keys = ["authors", "keywords"]
+    list_fields = {}
+    for key in list_keys:
+        list_fields[key] = extract_list_field(v, key)
+
+    return {
+        "id": v["UID"],
+        "forum": v["UID"],
+        "rocketchat_channel": get_paper_rocketchat(v["UID"]),
+        "content": {
+            "title": v["title"],
+            "authors": list_fields["authors"],
+            "keywords": list_fields["keywords"],
+            "abstract": v["abstract"],
+            "TLDR": v["abstract"][:250] + "...",
+            "demo_url": v["URL"],
+            "pdf_url": v.get("pdf_url", ""),
+            "track": v.get("track", ""),
+            "sessions": v["sessions"],
+            "recs": [],
+        },
+    }
+
+
 def format_tutorial(v):
     list_keys = ["organizers"]
     list_fields = {}
@@ -308,10 +333,10 @@ def demo_poster(demo_poster):
     v = by_uid["demo_papers"][uid]
     data = _data()
 
-    data["openreview"] = format_paper(by_uid["demo_papers"][uid])
+    data["openreview"] = format_demo_paper(by_uid["demo_papers"][uid])
     data["id"] = uid
 
-    data["paper"] = format_paper(v)
+    data["paper"] = format_demo_paper(v)
     return render_template("demo_poster.html", **data)
 
 

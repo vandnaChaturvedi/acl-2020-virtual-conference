@@ -148,10 +148,17 @@ def read_demo_paper_tsv(inp):
         out['abstract'] = clean_abstract(ds[0]['abstract'])
         out['authors'] = parse_authors(ds[0]['authors'])
         out['paper_type'] = ds[0]['paper_type']
-        out['track'] = [ds[0]['track'], ds[1]['track']]
-        out['days'] = [ds[0]['Day Date'].split(',')[0], ds[1]['Day Date'].split(',')[0]]
-        out['start_time'] = [ds[0]['Ses Time'], ds[1]['Ses Time']]
-        out['end_time'] = [ds[0]['Ses End Time'], ds[1]['Ses End Time']]
+        out['sessions'] = [
+            {
+                'name': d['track'],
+                'day': d['Day Date'].split(',')[0],
+                'date': ' '.join(d['Day Date'].split(' ')[1:-1]),
+                'start_time': d['Ses Time'],
+                'end_time': d['Ses End Time'],
+                'timezone': 'UTC+0'
+            }
+            for d in ds
+        ]
         return out
 
     result = [merge(r["value"]) for r in result]
@@ -162,7 +169,7 @@ def main():
     args = parse_arguments()
     demo_papers = read_demo_paper_tsv(args.demo_papers_file)
     with open('demo_papers.yml', 'w') as fd:
-        yaml.safe_dump(demo_papers, fd)
+        yaml.safe_dump(demo_papers, fd, default_flow_style=False)
 
 
 if __name__ == "__main__":

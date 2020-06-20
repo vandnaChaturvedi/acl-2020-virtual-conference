@@ -44,10 +44,12 @@
       >{{ "," if not loop.last }}
       {% endfor %}
     </p>
+    <!-- 
     <p class="card-text text-center">
       <span class="">Track:</span>
       {{ paper.content.track }}
     </p>
+   -->
     <div class="text-center p-3">
       <a class="card-link" data-toggle="collapse" role="button" href="#details">
         Abstract
@@ -71,9 +73,9 @@
     {% for session in paper.content.sessions %}
       <div>
       {{session.session}}
-      <span class="session_times">{{session.time_string}}</span>
-      [<a href="{{session.zoom_link}}" target="_blank"  class="card-link">Live QA</a>]
-      [<a target="_blank" href="{{session.ical_link}}">Cal</a>]
+      <!-- <span class="session_times">{{session.start_time}}</span> -->
+      [<a href="{{session.zoom_link}}" target="_blank"  class="card-link">{{session.name}}</a>]
+      [<a target="_blank" href="{{session.ical_link}}">{{session.day}}, {{session.date}}, {{session.start_time}} - {{session.end_time}} {{session.timezone}}</a>]
       </div>
     {% endfor %}
     </div>
@@ -143,7 +145,7 @@
         initPDFViewer("{{paper.poster_pdf | default(config.default_poster_pdf)}}",'#pdf_view');
     })
 </script>
-
+<!--
 <div class="container" style="padding-bottom: 30px; padding-top:30px">
   <center>
     <h2> Similar Papers </h2>
@@ -171,7 +173,7 @@
   {% endfor %}
   </div>
 </div>
-
+-->
 <script src="static/js/time-extend.js"></script>
 <script>
   $(document).ready(()=>{
