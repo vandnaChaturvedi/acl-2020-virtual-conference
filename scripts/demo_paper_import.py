@@ -148,7 +148,7 @@ def read_demo_paper_tsv(inp):
         out["paper_type"] = ds[0]["paper_type"]
         out["sessions"] = [
             {
-                "name": d["track"],
+                "track": d["track"],
                 "day": d["Day Date"].split(",")[0],
                 "date": " ".join(d["Day Date"].split(" ")[1:-1]),
                 "start_time": d["Ses Time"],
