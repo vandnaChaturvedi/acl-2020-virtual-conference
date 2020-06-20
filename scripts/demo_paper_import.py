@@ -5,7 +5,6 @@ import re
 
 import yaml
 
-
 re_author_split = re.compile(" and |, ")
 re_curly_brace = re.compile("{([A-Za-z0-9 ]+)}")
 
@@ -91,8 +90,8 @@ def clean_abstract(abstract):
     abstract = re_mathmode.sub(r"\1", abstract)
     abstract = re_inline_italics.sub(r"\1", abstract)
     abstract = re_italics.sub(r"\1", abstract)
-    abstract = ' '.join(abstract.split("\""))
-    abstract = ' '.join(abstract.split("'"))
+    abstract = " ".join(abstract.split('"'))
+    abstract = " ".join(abstract.split("'"))
     abstract = re_multi_space.sub(" ", abstract)
     return abstract
 
@@ -101,8 +100,8 @@ def clean_title(paper_title):
     for source, dest in direct_replacements.items():
         paper_title = paper_title.replace(source, dest)
     paper_title = re_curly_brace.sub(r"\1", paper_title)
-    paper_title = ' '.join(paper_title.split("\""))
-    paper_title = ' '.join(paper_title.split("'"))
+    paper_title = " ".join(paper_title.split('"'))
+    paper_title = " ".join(paper_title.split("'"))
     paper_title = re_multi_space.sub(" ", paper_title)
     return paper_title
 
@@ -131,31 +130,32 @@ def parse_arguments():
 
 def read_demo_paper_tsv(inp):
     import csv
-    with open(inp, 'r') as fd:
-        data = list(csv.DictReader(fd, delimiter='\t'))
+
+    with open(inp, "r") as fd:
+        data = list(csv.DictReader(fd, delimiter="\t"))
     key = lambda datum: datum["UID"]
     data.sort(key=key)
     result = [
-        {'UID': key, 'value': [item for item in group]}
+        {"UID": key, "value": [item for item in group]}
         for key, group in itertools.groupby(data, key=key)
     ]
 
     def merge(ds):
         out = {}
-        out['UID'] = ds[0]['UID']
-        out['URL'] = ds[0]['URL'].strip()
-        out['title'] = clean_title(ds[0]['title'])
-        out['abstract'] = clean_abstract(ds[0]['abstract'])
-        out['authors'] = parse_authors(ds[0]['authors'])
-        out['paper_type'] = ds[0]['paper_type']
-        out['sessions'] = [
+        out["UID"] = ds[0]["UID"]
+        out["URL"] = ds[0]["URL"].strip()
+        out["title"] = clean_title(ds[0]["title"])
+        out["abstract"] = clean_abstract(ds[0]["abstract"])
+        out["authors"] = parse_authors(ds[0]["authors"])
+        out["paper_type"] = ds[0]["paper_type"]
+        out["sessions"] = [
             {
-                'name': d['track'],
-                'day': d['Day Date'].split(',')[0],
-                'date': ' '.join(d['Day Date'].split(' ')[1:-1]),
-                'start_time': d['Ses Time'],
-                'end_time': d['Ses End Time'],
-                'timezone': 'UTC+0'
+                "name": d["track"],
+                "day": d["Day Date"].split(",")[0],
+                "date": " ".join(d["Day Date"].split(" ")[1:-1]),
+                "start_time": d["Ses Time"],
+                "end_time": d["Ses End Time"],
+                "timezone": "UTC+0",
             }
             for d in ds
         ]
@@ -168,7 +168,7 @@ def read_demo_paper_tsv(inp):
 def main():
     args = parse_arguments()
     demo_papers = read_demo_paper_tsv(args.demo_papers_file)
-    with open('demo_papers.yml', 'w') as fd:
+    with open("demo_papers.yml", "w") as fd:
         yaml.safe_dump(demo_papers, fd, default_flow_style=False)
 
 

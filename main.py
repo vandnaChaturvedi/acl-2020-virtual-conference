@@ -340,7 +340,6 @@ def demo_poster(demo_poster):
     return render_template("demo_poster.html", **data)
 
 
-
 @app.route("/poster_<poster>.html")
 def poster(poster):
     uid = poster
