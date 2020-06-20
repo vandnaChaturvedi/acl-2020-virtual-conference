@@ -45,8 +45,7 @@ def create_user(client, profile, user):
 def delete_user(client, profile, user):
     """ Deletes a user from the pool """
     response = client.admin_delete_user(
-        UserPoolId=profile["user_pool_id"],
-        Username=user.email
+        UserPoolId=profile["user_pool_id"], Username=user.email
     )
     return response
 
@@ -54,8 +53,7 @@ def delete_user(client, profile, user):
 def disable_user(client, profile, user):
     """ Disables the specified user """
     response = client.admin_disable_user(
-        UserPoolId=profile["user_pool_id"],
-        Username=user.email
+        UserPoolId=profile["user_pool_id"], Username=user.email
     )
     return response
 
