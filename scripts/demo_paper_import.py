@@ -134,7 +134,7 @@ def read_demo_paper_tsv(inp):
     key = lambda datum: datum["UID"]
     data.sort(key=key)
     result = [
-        {"UID": key, "value": [item for item in group]}
+        {"UID": key, "value": list(group)}
         for key, group in itertools.groupby(data, key=key)
     ]
 
