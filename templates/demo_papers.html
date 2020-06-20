@@ -1,5 +1,5 @@
-{% set active_page = "Papers" %}
-{% set page_title = "Papers" %}
+{% set active_page = "Demo Papers" %}
+{% set page_title = "Demo Papers" %}
 
 {% extends "base.html" %}
 {% block head %}
@@ -14,7 +14,13 @@
 
 {% block tabs %}
 <ul class="nav nav-pills justify-content-center">
-  <li class="nav-item active">
+  <li class="nav-item">
+    <a class="nav-link text-muted" href="papers.html">Browse </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link text-muted" href="paper_vis.html">Visualization</a>
+  </li>
+  <li class="nav-item active" style="background-color: #bed972;">
     <a
       class="nav-link text-muted active"
       data-toggle="tab"
@@ -22,14 +28,8 @@
       role="tab"
       aria-controls="nav-home"
       aria-selected="true"
-      >Browse
+      >Demo Papers
     </a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link text-muted" href="paper_vis.html">Visualization</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link text-muted" href="demo_papers.html">Demo Papers</a>
   </li>
 </ul>
 
@@ -155,7 +155,7 @@
 <script src="static/js/little_helpers.js"></script>
 <script src="static/js/lazy_load.js"></script>
 <script src="static/js/persistor.js"></script>
-<script src="static/js/papers.js"></script>
+<script src="static/js/demo_papers.js"></script>
 <script>
   $(document).ready(function () {
     tippy("[data-tippy-content]", { trigger: "mouseenter focus" });

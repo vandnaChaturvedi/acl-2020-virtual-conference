@@ -46,7 +46,7 @@ def main(site_data_path):
         elif typ == "yml":
             site_data[name] = yaml.load(open(f).read(), Loader=yaml.SafeLoader)
 
-    for typ in ["papers", "speakers", "tutorials", "workshops", "demos"]:
+    for typ in ["papers", "speakers", "tutorials", "workshops", "demos", "demo_papers"]:
         by_uid[typ] = {}
         for p in site_data[typ]:
             by_uid[typ][p["UID"]] = p
@@ -166,6 +166,13 @@ def papers():
     data = _data()
     data["papers"] = site_data["papers"]
     return render_template("papers.html", **data)
+
+
+@app.route("/demo_papers.html")
+def demo_papers():
+    data = _data()
+    data["demo_papers"] = site_data["demo_papers"]
+    return render_template("demo_papers.html", **data)
 
 
 @app.route("/paper_vis.html")
@@ -295,6 +302,18 @@ def format_workshop(v):
 
 
 # ITEM PAGES
+@app.route("/demo_poster_<demo_poster>.html")
+def demo_poster(demo_poster):
+    uid = demo_poster
+    v = by_uid["demo_papers"][uid]
+    data = _data()
+
+    data["openreview"] = format_paper(by_uid["demo_papers"][uid])
+    data["id"] = uid
+
+    data["paper"] = format_paper(v)
+    return render_template("demo_poster.html", **data)
+
 
 
 @app.route("/poster_<poster>.html")
@@ -400,6 +419,14 @@ def paper_json():
     return jsonify(json)
 
 
+@app.route("/demo_papers.json")
+def demo_paper_json():
+    json = []
+    for v in site_data["demo_papers"]:
+        json.append(format_paper(v))
+    return jsonify(json)
+
+
 @app.route("/static/<path:path>")
 def send_static(path):
     return send_from_directory("static", path)
@@ -419,6 +446,8 @@ def generator():
 
     for paper in site_data["papers"]:
         yield "poster", {"poster": str(paper["UID"])}
+    for demo_paper in site_data["demo_papers"]:
+        yield "demo_poster", {"demo_poster": str(demo_paper["UID"])}
     for speaker in site_data["speakers"]:
         yield "speaker", {"speaker": str(speaker["UID"])}
     for tutorial in site_data["tutorials"]:
