@@ -129,8 +129,6 @@ def parse_arguments():
 
 
 def read_demo_paper_tsv(inp):
-    import csv
-
     with open(inp, "r") as fd:
         data = list(csv.DictReader(fd, delimiter="\t"))
     key = lambda datum: datum["UID"]
