@@ -30,32 +30,59 @@ class User:
 
 def create_user(client, profile, user):
     """ Creates a new user in the specified user pool """
-    response = client.admin_create_user(
-        UserPoolId=profile["user_pool_id"],
-        Username=user.email,
-        UserAttributes=[
-            {"Name": "email", "Value": user.email},
-            {"Name": "email_verified", "Value": "true"},
-            {"Name": "custom:name", "Value": user.name()},
-        ],
-    )
-    return response
+    try:
+        response = client.admin_create_user(
+            UserPoolId=profile["user_pool_id"],
+            Username=user.email,
+            UserAttributes=[
+                {"Name": "email", "Value": user.email},
+                {"Name": "email_verified", "Value": "true"},
+                {"Name": "custom:name", "Value": user.name()},
+            ],
+        )
+        if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+            print(f"User {user.email} was created successfully")
+        return response
+    except client.exceptions.UsernameExistsException as error:
+        print(f"User {user.email} exists")
+        return error.response
+    except client.exceptions.ClientError as error:
+        print(f"Fail to create user {user.email}")
+        return error.response
 
 
 def delete_user(client, profile, user):
     """ Deletes a user from the pool """
-    response = client.admin_delete_user(
-        UserPoolId=profile["user_pool_id"], Username=user.email
-    )
-    return response
+    try:
+        response = client.admin_delete_user(
+            UserPoolId=profile["user_pool_id"], Username=user.email
+        )
+        if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+            print(f"User {user.email} was deleted successfully")
+        return response
+    except client.exceptions.UserNotFoundException as error:
+        print(f"User {user.email} does not exist")
+        return error.response
+    except client.exceptions.ClientError as error:
+        print(f"Fail to delete user {user.email}")
+        return error.response
 
 
 def disable_user(client, profile, user):
     """ Disables the specified user """
-    response = client.admin_disable_user(
-        UserPoolId=profile["user_pool_id"], Username=user.email
-    )
-    return response
+    try:
+        response = client.admin_disable_user(
+            UserPoolId=profile["user_pool_id"], Username=user.email
+        )
+        if response["ResponseMetadata"]["HTTPStatusCode"] == 200:
+            print(f"User {user.email} was disabled successfully")
+        return response
+    except client.exceptions.UserNotFoundException as error:
+        print(f"User {user.email} does not exist")
+        return error.response
+    except client.exceptions.ClientError as error:
+        print(f"Fail to disable user {user.email}")
+        return error.response
 
 
 def parse_arguments():
@@ -132,13 +159,11 @@ if __name__ == "__main__":
         if args.disable:
             # Disable user
             for user in users:
-                response = disable_user(client, profile, user)
-                print(response)
+                disable_user(client, profile, user)
         else:
             # Create user
             for user in users:
-                response = create_user(client, profile, user)
-                print(response)
+                create_user(client, profile, user)
     else:
         print(message)
         if isinstance(users, pandas.DataFrame):
