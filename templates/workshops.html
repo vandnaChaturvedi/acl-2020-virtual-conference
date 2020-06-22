@@ -1,15 +1,83 @@
 {% set active_page = "Workshops" %}
 {% set page_title = "Workshops" %}
 {% extends "base.html" %}
+{% block head %}
+{{ super() }}
+{% include 'dayview_cal_head.html' %}
+{% endblock %}
 
 {% block content %}
-<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">
-  <div id="day">
-    <!-- Workshops -->
-    {{ components.section("Workshops") }}
-    <div class="speakers">
-      {{ components.workshopgroup(workshops) }}
+<p>
+  <b>
+  Below is the high-level schedule of workshops. Click on each workshop to see its detailed schedule and to access its material. <br/><br/>
+  Checkout <a href="https://acl2020.org/blog/intro-to-workshop-infrastructure/">this blog post</a> by workshop chairs to learn more about the new virtual format of workshops.      
+</b>
+</p>
+{{ components.tabs([("july5", "Sunday, July 5", ""),
+                    ("calendar", "Thursday, July 9", ""),
+                    ("july10", "Friday, July 10", "")]) }}
+
+<div class="tab-content py-3 px-3 px-sm-0" id="nav-tabContent">                 
+  <!-- <div
+    class="tab-pane active"
+    id="tab-calendar"
+    role="tabpanel"
+    aria-labelledby="nav-profile-tab"
+  >
+    <div class="form-group col">
+      <label for="tzOptions">Timezone:</label>
+      <select id="tzOptions" class="selectpicker" data-live-search="true">
+      </select>
     </div>
+
+    <div id="calendar" class="d-none d-sm-block"></div>
+    <div id="calendar_small" class="d-sm-none"></div>
+
+    <script type="text/javascript">
+      make_cal("serve_july5_workshop_calendar.json");
+    </script>
+  </div> -->
+
+  <div
+    class="tab-pane active"
+    id="tab-calendar"
+    role="tabpanel"
+    aria-labelledby="nav-profile-tab"
+  >
+    <div class="form-group col">
+      <label for="tzOptions">Timezone:</label>
+      <select id="tzOptions" class="selectpicker" data-live-search="true">
+      </select>
+    </div>
+
+    <div id="calendar" class="d-none d-sm-block"></div>
+    <div id="calendar_small" class="d-sm-none"></div>
+
+    <script type="text/javascript">
+      make_cal("serve_july9_workshop_calendar.json");
+    </script>
   </div>
+
+  <!-- <div
+    class="tab-pane active"
+    id="tab-calendar"
+    role="tabpanel"
+    aria-labelledby="nav-profile-tab"
+  >
+    <div class="form-group col">
+      <label for="tzOptions">Timezone:</label>
+      <select id="tzOptions" class="selectpicker" data-live-search="true">
+      </select>
+    </div>
+
+    <div id="calendar" class="d-none d-sm-block"></div>
+    <div id="calendar_small" class="d-sm-none"></div>
+
+    <script type="text/javascript">
+      make_cal("serve_july10_workshop_calendar.json");
+    </script>
+  </div> -->
+
 </div>
+
 {% endblock %}
