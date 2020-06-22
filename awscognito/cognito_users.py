@@ -9,11 +9,10 @@ import pandas
 import yaml
 
 
-@dataclass
+@dataclass(frozen=True)
 class User:
     """ Class for AWS Cognito user """
 
-    # pylint: disable=too-many-instance-attributes
     first_name: str
     last_name: str
     email: str
