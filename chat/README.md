@@ -54,6 +54,7 @@ https://forums.rocket.chat/t/anyone-auth0-sso-experience/2060/6
 ## Scripts
 
 `make_poster_rooms.py` -> for creating a chat room for each poster.
+`dump_users.py` -> generate a CSV of data for all users on the server.
 
 
 ## Chat Server Configuration (config.yml - Don't check in)
