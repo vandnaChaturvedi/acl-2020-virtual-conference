@@ -116,7 +116,13 @@ def parse_arguments():
         "--disable",
         action="store_true",
         default=False,
-        help="Disable users (instead of create) listed in the file",
+        help="Disable users (instead of create) listed in the file.",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        default=False,
+        help="Do not create or disable.  List users only",
     )
     parser.add_argument(
         "user_file", help="The file contains user information for AWS Cognito",
@@ -165,7 +171,10 @@ if __name__ == "__main__":
     data = load_data(args.user_file, args.aws_profile)
 
     # We can create or disable user now
-    if args.disable:
+    if args.check:
+        for user in data["users"]:
+            print(user)
+    elif args.disable:
         # Disable user
         for user in data["users"]:
             disable_user(data["client"], data["profile"], user)

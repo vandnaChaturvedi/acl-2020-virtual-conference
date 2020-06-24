@@ -32,4 +32,10 @@ python cognito_users.py -d user.csv aws_profile.yml
 ```bash
 python cognito_users.py -h
 ```
+
+* Check using cognito_users.py
+
+```bash
+python cognito_users.py --check user.csv aws_profile.yml
+```
 .
