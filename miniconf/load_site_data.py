@@ -191,25 +191,24 @@ def build_schedule(overall_calendar: List[Dict[str, Any]]) -> List[Dict[str, Any
     for event in events:
         event_type = event["type"]
         if event_type == "Plenary Sessions":
-            event["classNames"] = ["calendar-event-plenary"]
+            event["color"] = "red"
             event["url"] = event["link"]
         elif event_type == "Tutorials":
-            event["classNames"] = ["calendar-event-tutorial"]
+            event["color"] = "#BF4E30"
             event["url"] = event["link"]
         elif event_type == "Workshops":
-            event["classNames"] = ["calendar-event-workshops"]
+            event["color"] = "#028090"
             event["url"] = event["link"]
         elif event_type == "QA Sessions":
-            event["classNames"] = ["calendar-event-qa"]
+            event["color"] = "brown"
             event["url"] = event["link"]
         elif event_type == "Socials":
-            event["classNames"] = ["calendar-event-socials"]
+            event["color"] = "Bright Green"
             event["url"] = event["link"]
         else:
-            event["classNames"] = ["calendar-event-other"]
+            event["color"] = "#6699ff"
             event["url"] = event["link"]
 
-        event["classNames"].append("calendar-event")
     return events
 
 
