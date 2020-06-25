@@ -19,7 +19,7 @@ def parse_arguments():
     )
     parser.add_argument(
         "--channel-dump",
-        default="rocketchat-channel-details.csv",
+        default="channels.csv",
         help="Channel details dumped from rocketchat",
     )
     parser.add_argument(
@@ -51,7 +51,7 @@ def find_user_id(email, user_dump):
     assert (
         len(found_id) == 1
     ), '>1 user found registered with email "{}" (this should not happen)'.format(email)
-    return found_id[0]
+    return found_id.values[0]
 
 
 def add_user_to_channel(user_data, rocket, test):
@@ -78,7 +78,7 @@ def main():
 
         user_dump = load_pandas(args.user_dump)
         channel_dump = load_pandas(args.channel_dump)
-        channel_dump.rename(columns={"_id": "channel_id"}, inplace=True)
+        channel_dump.rename(columns={"_id": "channel_id", "name": "channel_name"}, inplace=True)
         user_to_channel = load_pandas(args.input)
 
         assert "emails" in user_dump, "User dump file doesn't have an email column"

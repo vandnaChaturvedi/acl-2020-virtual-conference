@@ -47,6 +47,7 @@ def get_all_users(rocket, fields_string):
         total = response["total"]
         user_list.extend(response["users"])
         offset += response["count"]
+        print('Loaded {}/{}'.format(offset, total))
     return user_list
 
 
