@@ -11,6 +11,7 @@ class SessionInfo:
     start_time: datetime
     end_time: datetime
     zoom_link: str
+    ical_link: str
 
     @property
     def time_string(self) -> str:
@@ -35,7 +36,6 @@ class PaperContent:
     title: str
     authors: List[str]
     track: str
-    paper_type: str
     abstract: str
     tldr: str
     keywords: List[str]
@@ -43,12 +43,6 @@ class PaperContent:
     demo_url: Optional[str]
     sessions: List[SessionInfo]
     similar_paper_uids: List[str]
-
-    def __post_init__(self):
-        if self.pdf_url:
-            assert self.pdf_url.startswith("https://"), self.pdf_url
-        if self.demo_url:
-            assert self.demo_url.startswith("https://"), self.demo_url
 
 
 @dataclass(frozen=True)
@@ -69,22 +63,19 @@ class Paper:
 
 
 @dataclass(frozen=True)
-class PlenarySession:
+class Keynote:
     id: str
+    speaker: str
+    slides_link: str
+    qa_link: str
     title: str
     image: str
-    date: str
+    institution: str
     day: str
-    time: Optional[str]
-    speaker: str
-    institution: Optional[str]
-    abstract: Optional[str]
-    bio: Optional[str]
-    # SlidesLive presentation ID
-    presentation_id: Optional[str]
-    rocketchat_channel: Optional[str]
-    qa_time: Optional[str]
-    zoom_link: Optional[str]
+    time: str
+    zoom: str
+    abstract: str
+    bio: str
 
 
 @dataclass(frozen=True)
@@ -115,3 +106,6 @@ class Workshop:
     organizers: List[str]
     abstract: str
     material: str
+    prerecorded: Optional[str]
+    livestream: Optional[str]
+    virtual_format_description: str
